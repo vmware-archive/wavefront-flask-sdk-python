@@ -1,0 +1,5 @@
+six
+flask
+opentracing>=2.0,<3
+wavefront_pyformance
+Werkzeug
