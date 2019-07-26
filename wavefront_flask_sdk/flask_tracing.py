@@ -12,14 +12,14 @@ from flask import _request_ctx_stack as stack
 import opentracing
 from opentracing.ext import tags
 
-from wavefront_flask_sdk.constants import FLASK_COMPONENT, NULL_TAG_VAL, \
-    REPORTER_PREFIX, REQUEST_PREFIX, RESPONSE_PREFIX, WAVEFRONT_PROVIDED_SOURCE
-
 from wavefront_pyformance.delta import delta_counter
 from wavefront_pyformance.tagged_registry import TaggedRegistry
 from wavefront_pyformance.wavefront_histogram import wavefront_histogram
 
 from wavefront_sdk.common import HeartbeaterService
+
+from .constants import FLASK_COMPONENT, NULL_TAG_VAL, REPORTER_PREFIX, \
+    REQUEST_PREFIX, RESPONSE_PREFIX, WAVEFRONT_PROVIDED_SOURCE
 
 
 # pylint: disable=invalid-name, too-many-instance-attributes
