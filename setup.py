@@ -41,7 +41,6 @@ setuptools.setup(
     install_requires=(
         'opentracing>=2.0',
         'flask>=1.0',
-        'Werkzeug>=0.14',
         'wavefront-opentracing-sdk-python>=1.2',
     )
 )
