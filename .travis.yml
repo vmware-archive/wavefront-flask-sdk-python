@@ -1,0 +1,38 @@
+dist: xenial
+language: python
+python:
+  - "2.7"
+  - "3.5"
+  - "3.6"
+  - "3.7"
+install:
+  - pip install opentracing
+  - pip install flask
+  - pip install wavefront-opentracing-sdk-python
+  - pip install flake8 flake8-colors flake8-import-order
+  - pip install pep8-naming
+  - pip install pydocstyle
+  - pip install pylint
+before_script:
+  - python -m flake8
+  - python -m pylint wavefront_sdk
+  - python -m pydocstyle
+script:
+  - if [[ "${TRAVIS_PULL_REQUEST}" != "false" ]]; then
+      test -n "$(git diff -G version= $TRAVIS_COMMIT_RANGE setup.py)";
+    fi
+deploy:
+  - provider: pypi
+    user: wavefront-cs
+    server: https://test.pypi.org/legacy/
+    password:
+      secure: "pfZcBPOwD2OiYwdYth+1bXzdi+/8ihHJPIfxZOc9U7uA0EViKTNPe1eeHimpEIYuFkCx69leEiO5zr6J2a7tUpZYfw9LBrqiY08fl8KhmHeelRzwcW5wJtJUQC70Oj19m5w60BJn8cARg/OOLeMCEo3/RzzpMyxD79C/zrBfquSMMOrC5Ca98LFsaR/iAnVowOtLqQqQ2hJWEYSaMJtSD5LqtJwqZiUbs1hZ7TXmt3f0BrypTwkVAsITeV9lzl1cxiSy/PEZ+JMNu7Gt2CPCES6WBwoO9btfKHa5CtkooTjEmOM9oqlZyfXvdZylOiO8ZvGE4AmEWTEqCqulSUVWZc2OPS3v8ZFkj5OdtY1Qm5+qa24yQjh5UDO2MXGrD7DUh8lt5aZXSFzJznF/lJt5jIQYVHWGHdzVvydzNTJ4pzf40M6/HLIubjxT0L63nlMlgujKyq6ELHwBS6gr5m5jmOIjpbL4X7Cv/t/SCUxAazEhWA9x3OFqdPnfmtO+ncLVHmIjzITBYcV9qPB2dHxQfuTIuaNh2CDhHs4fdqiDxpciYTtiXIg9ozl50w5/2UJQ5Wf8FLauJnKr/PmKWqNTzSMzlYIMvSuHTYfhHvtzykyu+pT5gtdYEgFmYV3tvnofxmMnJXktI7FBVMYCTysBKE6cin8qem9WRNMZvOSwdes="
+    on:
+      python: 3.7
+  - provider: pypi
+    user: wavefront-cs
+    password:
+      secure: "pfZcBPOwD2OiYwdYth+1bXzdi+/8ihHJPIfxZOc9U7uA0EViKTNPe1eeHimpEIYuFkCx69leEiO5zr6J2a7tUpZYfw9LBrqiY08fl8KhmHeelRzwcW5wJtJUQC70Oj19m5w60BJn8cARg/OOLeMCEo3/RzzpMyxD79C/zrBfquSMMOrC5Ca98LFsaR/iAnVowOtLqQqQ2hJWEYSaMJtSD5LqtJwqZiUbs1hZ7TXmt3f0BrypTwkVAsITeV9lzl1cxiSy/PEZ+JMNu7Gt2CPCES6WBwoO9btfKHa5CtkooTjEmOM9oqlZyfXvdZylOiO8ZvGE4AmEWTEqCqulSUVWZc2OPS3v8ZFkj5OdtY1Qm5+qa24yQjh5UDO2MXGrD7DUh8lt5aZXSFzJznF/lJt5jIQYVHWGHdzVvydzNTJ4pzf40M6/HLIubjxT0L63nlMlgujKyq6ELHwBS6gr5m5jmOIjpbL4X7Cv/t/SCUxAazEhWA9x3OFqdPnfmtO+ncLVHmIjzITBYcV9qPB2dHxQfuTIuaNh2CDhHs4fdqiDxpciYTtiXIg9ozl50w5/2UJQ5Wf8FLauJnKr/PmKWqNTzSMzlYIMvSuHTYfhHvtzykyu+pT5gtdYEgFmYV3tvnofxmMnJXktI7FBVMYCTysBKE6cin8qem9WRNMZvOSwdes="
+    on:
+      python: 3.7
+      tags: true
