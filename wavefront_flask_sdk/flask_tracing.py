@@ -108,7 +108,7 @@ class FlaskTracing(opentracing.Tracer):
                 wf_metric_sender=self.reporter.wavefront_client,
                 source=self.reporter.source,
                 tags=dict(self.application_tags.get_as_list()),
-                prefix='{}.flask.sender'.format(SDK_METRIC_PREFIX))
+                prefix='{}.flask'.format(SDK_METRIC_PREFIX))
             self._sdk_metrics_registry.new_gauge(
                 'version', lambda: get_sem_ver('wavefront-flask-sdk-python'))
 
