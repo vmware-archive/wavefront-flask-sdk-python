@@ -69,7 +69,7 @@ class FlaskTracing(opentracing.Tracer):
             raise ValueError('trace_all_requests=True requires an app object')
 
         if trace_all_requests is None:
-            trace_all_requests = False if app is None else True
+            trace_all_requests = app is not None
 
         if not callable(tracer):
             self.__tracer = tracer
@@ -391,12 +391,13 @@ class FlaskTracing(opentracing.Tracer):
     def _call_start_span_cb(self, span, request):
         if self._start_span_cb is None:
             return
-
+        # pylint: disable=broad-except
         try:
             self._start_span_cb(span, request)
         except Exception:
             pass
 
+    # pylint: disable=redefined-outer-name
     @staticmethod
     def update_gauge(registry, key, tags, val):
         """Update gauge value.
