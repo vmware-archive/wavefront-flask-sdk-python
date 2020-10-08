@@ -15,7 +15,7 @@ with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
 
 setuptools.setup(
     name='wavefront-flask-sdk-python',
-    version='1.0',
+    version='1.1.0',
     author='Wavefront by VMware',
     author_email='songhao@vmware.com',
     url='https://github.com/wavefrontHQ/wavefront-flask-sdk-python',
@@ -42,5 +42,6 @@ setuptools.setup(
         'opentracing>=2.0',
         'flask>=1.0',
         'wavefront-opentracing-sdk-python>=1.2',
+        'wavefront-sdk-python>=1.7.4'
     )
 )

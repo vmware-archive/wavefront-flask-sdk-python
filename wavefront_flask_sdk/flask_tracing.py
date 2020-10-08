@@ -17,6 +17,9 @@ from wavefront_pyformance.tagged_registry import TaggedRegistry
 from wavefront_pyformance.wavefront_histogram import wavefront_histogram
 
 from wavefront_sdk.common import HeartbeaterService
+from wavefront_sdk.common.constants import SDK_METRIC_PREFIX
+from wavefront_sdk.common.metrics.registry import WavefrontSdkMetricsRegistry
+from wavefront_sdk.common.utils import get_sem_ver
 
 from .constants import FLASK_COMPONENT, NULL_TAG_VAL, REPORTER_PREFIX, \
     REQUEST_PREFIX, RESPONSE_PREFIX, WAVEFRONT_PROVIDED_SOURCE
@@ -29,7 +32,7 @@ class FlaskTracing(opentracing.Tracer):
     # pylint: disable=too-many-arguments, unused-variable
     def __init__(self, tracer=None, reporter=None, application_tags=None,
                  trace_all_requests=None, app=None, traced_attributes=None,
-                 start_span_cb=None):
+                 start_span_cb=None, enable_internal_metrics=True):
         """Construct Wavefront Flask Middleware.
 
         :param tracer: Tracer
@@ -69,7 +72,7 @@ class FlaskTracing(opentracing.Tracer):
             raise ValueError('trace_all_requests=True requires an app object')
 
         if trace_all_requests is None:
-            trace_all_requests = False if app is None else True
+            trace_all_requests = app is not None
 
         if not callable(tracer):
             self.__tracer = tracer
@@ -99,6 +102,15 @@ class FlaskTracing(opentracing.Tracer):
                 """Process error response."""
                 if error is not None:
                     self._after_request_fn(error=error)
+
+        if enable_internal_metrics:
+            self._sdk_metrics_registry = WavefrontSdkMetricsRegistry(
+                wf_metric_sender=self.reporter.wavefront_client,
+                source=self.reporter.source,
+                tags=dict(self.application_tags.get_as_list()),
+                prefix='{}.flask'.format(SDK_METRIC_PREFIX))
+            self._sdk_metrics_registry.new_gauge(
+                'version', lambda: get_sem_ver('wavefront-flask-sdk-python'))
 
     @property
     def tracer(self):
@@ -391,12 +403,13 @@ class FlaskTracing(opentracing.Tracer):
     def _call_start_span_cb(self, span, request):
         if self._start_span_cb is None:
             return
-
+        # pylint: disable=broad-except
         try:
             self._start_span_cb(span, request)
         except Exception:
             pass
 
+    # pylint: disable=redefined-outer-name
     @staticmethod
     def update_gauge(registry, key, tags, val):
         """Update gauge value.
