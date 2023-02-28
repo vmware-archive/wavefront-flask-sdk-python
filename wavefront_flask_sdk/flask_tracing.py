@@ -108,7 +108,7 @@ class FlaskTracing(opentracing.Tracer):
                 wf_metric_sender=self.reporter.wavefront_client,
                 source=self.reporter.source,
                 tags=dict(self.application_tags.get_as_list()),
-                prefix='{}.flask'.format(SDK_METRIC_PREFIX))
+                prefix=f'{SDK_METRIC_PREFIX}.flask')
             self._sdk_metrics_registry.new_gauge(
                 'version', lambda: get_sem_ver('wavefront-flask-sdk-python'))
 
@@ -173,6 +173,7 @@ class FlaskTracing(opentracing.Tracer):
             headers[k.lower()] = v
 
         request.environ['_wf_start_timestamp'] = default_timer()
+        # pylint: disable=W1505
         request.environ['_wf_cpu_nanos'] = time.clock()
 
         entity_name = (request.url_rule.rule or operation_name). \
@@ -396,6 +397,7 @@ class FlaskTracing(opentracing.Tracer):
             self.reg.counter(response_metric_key + ".total_time",
                              tags=complete_tags_map).inc(timestamp_duration)
         if wf_cpu_nanos:
+            # pylint: disable=W1505
             cpu_nanos_duration = time.clock() - wf_cpu_nanos
             wavefront_histogram(self.reg, response_metric_key + ".cpu_ns",
                                 tags=complete_tags_map).add(cpu_nanos_duration)
